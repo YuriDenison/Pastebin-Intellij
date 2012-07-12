@@ -1,0 +1,18 @@
+<idea-plugin version="2">
+    <id>Pastebin-IDEA</id>
+    <name>Pastebin.com</name>
+    <version>0.1</version>
+    <idea-version since-build="107.105"/>
+
+    <description><![CDATA[
+      Pastebin.com plugin for Intellij IDEA
+      ]]></description>
+
+    <actions>
+        <action id="PastebinPlugin.CreatePasteAction" class="com.intellij.plugins.pastebin.CreatePasteAction"
+                text="Send to pastebin.com" description="Generate new paste using selected text">
+            <add-to-group group-id="EditMenu" anchor="after" relative-to-action="CutCopyPasteGroup"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt P"/>
+        </action>
+    </actions>
+</idea-plugin>
