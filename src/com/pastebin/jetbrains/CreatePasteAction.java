@@ -1,4 +1,4 @@
-package com.intellij.plugins.pastebin;
+package com.pastebin.jetbrains;
 
 import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;

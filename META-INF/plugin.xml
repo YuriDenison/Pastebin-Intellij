@@ -9,7 +9,7 @@
       ]]></description>
 
     <actions>
-        <action id="PastebinPlugin.CreatePasteAction" class="com.intellij.plugins.pastebin.CreatePasteAction"
+        <action id="PastebinPlugin.CreatePasteAction" class="com.pastebin.jetbrains.CreatePasteAction"
                 text="Send to pastebin.com" description="Generate new paste using selected text">
             <add-to-group group-id="EditMenu" anchor="after" relative-to-action="CutCopyPasteGroup"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt P"/>
