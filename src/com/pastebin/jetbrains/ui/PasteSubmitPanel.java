@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-public class PasteSubmitDialog extends DialogWrapper {
+public class PasteSubmitPanel extends DialogWrapper {
   private JPanel contentPanel;
   private JButton buttonOK;
   private JTextField textField;
@@ -25,7 +25,7 @@ public class PasteSubmitDialog extends DialogWrapper {
   private JPanel buttonPanel;
   private JPanel mainPanel;
 
-  public PasteSubmitDialog(final Project project, final String text) {
+  public PasteSubmitPanel(final Project project, final String text) {
     super(project, true);
     setModal(true);
     getRootPane().setDefaultButton(buttonOK);
