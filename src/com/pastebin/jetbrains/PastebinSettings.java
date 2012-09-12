@@ -31,7 +31,6 @@ public class PastebinSettings implements PersistentStateComponent<Element> {
 
   private String myLogin;
   private String myPassword;
-  private String myId;
   private String loginID;
 
   public static PastebinSettings getInstance() {
@@ -82,7 +81,7 @@ public class PastebinSettings implements PersistentStateComponent<Element> {
   }
 
   public String getLoginId() {
-    return myId != null ? myId : "";
+    return loginID != null ? loginID : "";
   }
 
   public void setLogin(String login) {

@@ -1,10 +1,9 @@
-package org.bitbucket.connectors.jetbrains.ui;
+package com.pastebin.jetbrains.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.pastebin.jetbrains.PastebinSettings;
 import com.pastebin.jetbrains.PastebinUtil;
-import com.pastebin.jetbrains.ui.PastebinSettingsPanel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

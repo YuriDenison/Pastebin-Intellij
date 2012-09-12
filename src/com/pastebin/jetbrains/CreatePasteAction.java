@@ -1,19 +1,15 @@
 package com.pastebin.jetbrains;
 
-import com.intellij.openapi.editor.actionSystem.EditorAction;
-import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 
 /**
  * @author Yuri Denison
  * @date 12.07.12
  */
-public class CreatePasteAction extends EditorAction {
-  protected CreatePasteAction(EditorActionHandler defaultHandler) {
-    super(defaultHandler);
-  }
+public class CreatePasteAction extends AnAction {
+  @Override
+  public void actionPerformed(AnActionEvent anActionEvent) {
 
-
-  public CreatePasteAction() {
-    super(new CreatePasteActionHandler());
   }
 }
