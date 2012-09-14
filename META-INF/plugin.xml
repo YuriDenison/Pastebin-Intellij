@@ -1,7 +1,8 @@
 <idea-plugin version="2">
     <id>Pastebin-IDEA</id>
-    <name>Pastebin.com</name>
+    <name>Pastebin</name>
     <version>0.1</version>
+    <vendor email="yuri.denison@jetbrains.com" url="https://bitbucket.org/volkman/pastebin-intellij-idea-plugin"/>
     <idea-version since-build="107.105"/>
 
     <description><![CDATA[
@@ -15,4 +16,8 @@
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt P"/>
         </action>
     </actions>
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceInterface="com.pastebin.jetbrains.PastebinSettings"
+                            serviceImplementation="com.pastebin.jetbrains.PastebinSettings"/>
+    </extensions>
 </idea-plugin>

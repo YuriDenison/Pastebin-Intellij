@@ -8,6 +8,7 @@ import com.intellij.openapi.util.PasswordUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Yuri Denison
@@ -92,7 +93,7 @@ public class PastebinSettings implements PersistentStateComponent<Element> {
     myPassword = password != null ? password : "";
   }
 
-  public void setLoginID(final String loginID) {
+  public void setLoginID(@Nullable final String loginID) {
     this.loginID = loginID != null ? loginID : "";
   }
 }
