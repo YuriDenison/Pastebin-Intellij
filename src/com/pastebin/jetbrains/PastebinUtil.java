@@ -35,7 +35,7 @@ import java.util.Map;
 public class PastebinUtil {
   private static final Logger LOG = Logger.getInstance(PastebinUtil.class);
   public static final String PASTEBIN = "Pastebin";
-  public static final Icon ICON = IconLoader.getIcon("res/pastebin.png", PastebinUtil.class);
+  public static final Icon ICON = IconLoader.getIcon("res/pastebin_favicon.png", PastebinUtil.class);
   private static final String API_KEY = "d42e7b2a43c3bd1149d2bbdae06730dd";
   private static final String POST_URL = "http://pastebin.com/api/api_post.php";
   private static final String LOGIN_URL = "http://pastebin.com/api/api_login.php";
@@ -157,7 +157,7 @@ public class PastebinUtil {
     return list.toArray(new NameValuePair[list.size()]);
   }
 
-  public void copyToClipboard(String str) {
+  public static void copyToClipboard(String str) {
     StringSelection selection = new StringSelection(str);
     Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
   }
@@ -241,7 +241,7 @@ public class PastebinUtil {
 
     @Override
     public String toString() {
-      return name().toLowerCase();
+      return name().charAt(0) + name().substring(1).toLowerCase();
     }
 
     public String getPastebinCode() {

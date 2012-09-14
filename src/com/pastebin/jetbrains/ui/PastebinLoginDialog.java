@@ -14,11 +14,9 @@ import javax.swing.*;
  */
 public class PastebinLoginDialog extends DialogWrapper {
   private PastebinLoginPanel myPanel;
-  private Project myProject;
 
   public PastebinLoginDialog(Project project) {
     super(project, true);
-    myProject = project;
 
     myPanel = new PastebinLoginPanel(this);
 
@@ -26,7 +24,7 @@ public class PastebinLoginDialog extends DialogWrapper {
     myPanel.setLogin(settings.getLogin());
     myPanel.setPassword(settings.getPassword());
 
-    setTitle(PastebinBundle.message("login-Pastebin"));
+    setTitle(PastebinBundle.message("login.pastebin"));
     setOKButtonText(PastebinBundle.message("login"));
     init();
   }

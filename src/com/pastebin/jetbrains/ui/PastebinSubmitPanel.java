@@ -6,6 +6,8 @@ import com.pastebin.jetbrains.PastebinUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * @author Yuri Denison
@@ -76,7 +78,10 @@ public class PastebinSubmitPanel extends JPanel {
   private void initSyntax() {
     syntaxLabel = new JLabel(PastebinBundle.message("label.syntax"));
     syntaxBox = new JComboBox();
-    for (String s : PastebinUtil.languages.keySet()) {
+    final Set<String> langSet = PastebinUtil.languages.keySet();
+    final String[] lang = langSet.toArray(new String[langSet.size()]);
+    Arrays.sort(lang);
+    for (String s : lang) {
       syntaxBox.addItem(s);
     }
     syntaxBox.setSelectedItem(SELECTED_LANGUAGE);

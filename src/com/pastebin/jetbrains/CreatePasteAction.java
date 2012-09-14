@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
+import com.pastebin.jetbrains.ui.PastebinLoginDialog;
 import com.pastebin.jetbrains.ui.PastebinSubmitDialog;
 
 /**
@@ -14,6 +15,10 @@ import com.pastebin.jetbrains.ui.PastebinSubmitDialog;
  * @date 12.07.12
  */
 public class CreatePasteAction extends AnAction {
+  public CreatePasteAction() {
+    super(null, null, PastebinUtil.ICON);
+  }
+
   @Override
   public void actionPerformed(AnActionEvent e) {
     final Project project = LangDataKeys.PROJECT.getData(e.getDataContext());
@@ -34,16 +39,27 @@ public class CreatePasteAction extends AnAction {
     final PastebinUtil.ExpireDate expireDate = submitDialog.getExpireDate();
     final PastebinUtil.AccessType accessType = submitDialog.getExposure();
 
-    if (accessType == PastebinUtil.AccessType.UNLISTED) {
-      try {
-        final String response =
-            PastebinUtil.request(PastebinUtil.constructCreateParameters(code, null, name, language, accessType, expireDate));
-        PastebinUtil.showNotification("Success", response, true);
-      } catch (PastebinException e1) {
-        PastebinUtil.showNotification("Failure", e1.getMessage(), false);
+    String userKey = null;
+    if (accessType != PastebinUtil.AccessType.UNLISTED) {
+      final PastebinSettings settings = PastebinSettings.getInstance();
+      final boolean logged = PastebinUtil.checkCredentials(settings.getLogin(), settings.getPassword());
+      if (logged) {
+        userKey = settings.getLoginId();
+      } else {
+        PastebinLoginDialog loginDialog = new PastebinLoginDialog(project);
+        loginDialog.show();
+        if (loginDialog.isOK()) {
+          userKey = settings.getLoginId();
+        }
       }
-    } else {
-
+    }
+    try {
+      final String response =
+          PastebinUtil.request(PastebinUtil.constructCreateParameters(code, userKey, name, language, accessType, expireDate));
+      PastebinUtil.showNotification(PastebinBundle.message("success"), PastebinBundle.message("paste.created", response), true);
+      PastebinUtil.copyToClipboard(response);
+    } catch (PastebinException e1) {
+      PastebinUtil.showNotification(PastebinBundle.message("failure"), e1.getMessage(), false);
     }
   }
 }
