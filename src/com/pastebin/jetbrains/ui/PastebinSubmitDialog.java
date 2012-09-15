@@ -2,8 +2,8 @@ package com.pastebin.jetbrains.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.pastebin.jetbrains.Paste;
 import com.pastebin.jetbrains.PastebinBundle;
-import com.pastebin.jetbrains.PastebinUtil;
 
 import javax.swing.*;
 
@@ -28,23 +28,7 @@ public class PastebinSubmitDialog extends DialogWrapper {
     return myPanel;
   }
 
-  public String getCode() {
-    return myPanel.getCode();
-  }
-
-  public PastebinUtil.ExpireDate getExpireDate() {
-    return myPanel.getExpireDate();
-  }
-
-  public PastebinUtil.AccessType getExposure() {
-    return myPanel.getExposure();
-  }
-
-  public String getSelectedLanguage() {
-    return myPanel.getSelectedLanguage();
-  }
-
-  public String getName() {
-    return myPanel.getName();
+  public Paste getPaste() {
+    return myPanel.getPaste();
   }
 }

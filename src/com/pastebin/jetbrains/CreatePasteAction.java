@@ -33,14 +33,10 @@ public class CreatePasteAction extends AnAction {
     if (!submitDialog.isOK()) {
       return;
     }
-    final String code = submitDialog.getCode();
-    final String name = submitDialog.getName();
-    final String language = submitDialog.getSelectedLanguage();
-    final PastebinUtil.ExpireDate expireDate = submitDialog.getExpireDate();
-    final PastebinUtil.AccessType accessType = submitDialog.getExposure();
+    final Paste paste = submitDialog.getPaste();
 
     String userKey = null;
-    if (accessType != PastebinUtil.AccessType.UNLISTED) {
+    if (paste.getAccessType() != Paste.AccessType.UNLISTED) {
       final PastebinSettings settings = PastebinSettings.getInstance();
       final boolean logged = PastebinUtil.checkCredentials(settings.getLogin(), settings.getPassword());
       if (logged) {
@@ -55,7 +51,7 @@ public class CreatePasteAction extends AnAction {
     }
     try {
       final String response =
-          PastebinUtil.request(PastebinUtil.constructCreateParameters(code, userKey, name, language, accessType, expireDate));
+          PastebinUtil.request(PastebinUtil.constructCreateParameters(paste, userKey));
       PastebinUtil.showNotification(PastebinBundle.message("success"), PastebinBundle.message("paste.created", response), true);
       PastebinUtil.copyToClipboard(response);
     } catch (PastebinException e1) {

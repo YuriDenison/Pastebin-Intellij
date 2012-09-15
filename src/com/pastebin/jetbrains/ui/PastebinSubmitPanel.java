@@ -1,8 +1,8 @@
 package com.pastebin.jetbrains.ui;
 
 import com.intellij.ui.ScrollPaneFactory;
+import com.pastebin.jetbrains.Paste;
 import com.pastebin.jetbrains.PastebinBundle;
-import com.pastebin.jetbrains.PastebinUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -65,20 +65,20 @@ public class PastebinSubmitPanel extends JPanel {
 
   private void initExpiration() {
     expirationLabel = new JLabel(PastebinBundle.message("label.expiration"));
-    expirationBox = new JComboBox(PastebinUtil.ExpireDate.values());
-    expirationBox.setSelectedItem(PastebinUtil.ExpireDate.NEVER);
+    expirationBox = new JComboBox(Paste.ExpireDate.values());
+    expirationBox.setSelectedItem(Paste.ExpireDate.NEVER);
   }
 
   private void initExposure() {
     exposureLabel = new JLabel(PastebinBundle.message("label.exposure"));
-    exposureBox = new JComboBox(PastebinUtil.AccessType.values());
-    exposureBox.setSelectedItem(PastebinUtil.AccessType.UNLISTED);
+    exposureBox = new JComboBox(Paste.AccessType.values());
+    exposureBox.setSelectedItem(Paste.AccessType.UNLISTED);
   }
 
   private void initSyntax() {
     syntaxLabel = new JLabel(PastebinBundle.message("label.syntax"));
     syntaxBox = new JComboBox();
-    final Set<String> langSet = PastebinUtil.languages.keySet();
+    final Set<String> langSet = Paste.languages.keySet();
     final String[] lang = langSet.toArray(new String[langSet.size()]);
     Arrays.sort(lang);
     for (String s : lang) {
@@ -97,23 +97,11 @@ public class PastebinSubmitPanel extends JPanel {
     codePanel.add(scrollPane);
   }
 
-  public String getCode() {
-    return code.getText();
-  }
-
-  public PastebinUtil.ExpireDate getExpireDate() {
-    return (PastebinUtil.ExpireDate) expirationBox.getSelectedItem();
-  }
-
-  public PastebinUtil.AccessType getExposure() {
-    return (PastebinUtil.AccessType) exposureBox.getSelectedItem();
-  }
-
-  public String getSelectedLanguage() {
-    return (String) syntaxBox.getSelectedItem();
-  }
-
-  public String getName() {
-    return nameField.getText();
+  public Paste getPaste() {
+    return new Paste(code.getText(),
+        nameField.getName(),
+        (String) syntaxBox.getSelectedItem(),
+        (Paste.ExpireDate) expirationBox.getSelectedItem(),
+        (Paste.AccessType) exposureBox.getSelectedItem());
   }
 }

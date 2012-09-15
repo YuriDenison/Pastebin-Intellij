@@ -1,4 +1,4 @@
-package com.pastebin.jetbrains.ui;
+package com.pastebin.jetbrains.ui.settings;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.ui.Messages;
@@ -24,6 +24,9 @@ public class PastebinSettingsPanel {
 
   private JButton myTestButton;
   private JTextPane mySignupPane;
+  private JTabbedPane pastePanel;
+  private JPanel userTab;
+  private JPanel trendingTab;
 
   public PastebinSettingsPanel() {
     String msg = PastebinBundle.message("signup.on.pastebin", "http://pastebin.com/login");
