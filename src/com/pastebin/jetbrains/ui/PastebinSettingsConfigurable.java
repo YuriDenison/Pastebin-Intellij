@@ -1,4 +1,4 @@
-package com.pastebin.jetbrains.ui.settings;
+package com.pastebin.jetbrains.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;

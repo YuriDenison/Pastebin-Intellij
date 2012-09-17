@@ -1,4 +1,4 @@
-package com.pastebin.jetbrains.ui.settings;
+package com.pastebin.jetbrains.ui;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.ui.Messages;
