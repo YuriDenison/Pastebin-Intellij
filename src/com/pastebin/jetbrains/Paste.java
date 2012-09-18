@@ -66,6 +66,18 @@ public class Paste {
     return language;
   }
 
+  public long getDate() {
+    return date;
+  }
+
+  public int getHits() {
+    return hits;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
   public enum ExpireDate {
     NEVER("Never", "N"),
     TEN_MINUTES("10 Minutes", "10M"),

@@ -1,4 +1,4 @@
-package com.pastebin.jetbrains.ui;
+package com.pastebin.jetbrains.ui.settings;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.ui.Messages;
@@ -25,6 +25,7 @@ public class PastebinSettingsPanel {
   private JButton myTestButton;
   private JTextPane mySignupPane;
   private JCheckBox myClipboardCheckbox;
+  private JPanel listPanel;
 
   public PastebinSettingsPanel(final boolean copyToClipboard) {
     String msg = PastebinBundle.message("signup.on.pastebin", "http://pastebin.com/login");
@@ -49,6 +50,8 @@ public class PastebinSettingsPanel {
 
     myClipboardCheckbox.setText(PastebinBundle.message("clipboard.setting"));
     myClipboardCheckbox.setSelected(copyToClipboard);
+
+    listPanel.add(new PasteTableMain().getMainPanel());
   }
 
   public JComponent getPanel() {

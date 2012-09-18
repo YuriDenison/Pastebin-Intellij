@@ -34,16 +34,16 @@ public class PastebinUtil {
   public static final Icon ICON = IconLoader.getIcon("res/pastebin.png", PastebinUtil.class);
 
 
-  public List<Paste> getTrendPasteList() throws PastebinException {
+  public static List<Paste> getTrendPasteList() throws PastebinException {
     return getPasteList(RequestUtil.constructTrendsParameters());
   }
 
-  public List<Paste> getUserPasteList(final int limit) throws PastebinException {
+  public static List<Paste> getUserPasteList(final int limit) throws PastebinException {
     return getPasteList(RequestUtil.constructListParameters(PastebinSettings.getInstance().getLoginId(), limit));
   }
 
   @Nullable
-  private List<Paste> getPasteList(@Nullable NameValuePair[] pairs) throws PastebinException {
+  private static List<Paste> getPasteList(@Nullable NameValuePair[] pairs) throws PastebinException {
     try {
       final Element rootElement = new SAXBuilder(false).build(new StringReader(RequestUtil.request(pairs))).getRootElement();
       final List pastes = rootElement.getChildren(PastebinBundle.message(PastebinBundle.message("dom.paste")));
@@ -66,9 +66,11 @@ public class PastebinUtil {
       }
       return list;
     } catch (JDOMException e) {
+      showNotification(PastebinBundle.message("failure"), PastebinBundle.message("network.error"), false);
       LOG.debug(e.getMessage());
       return null;
     } catch (IOException e) {
+      showNotification(PastebinBundle.message("failure"), PastebinBundle.message("network.error"), false);
       LOG.debug(e.getMessage());
       return null;
     }
