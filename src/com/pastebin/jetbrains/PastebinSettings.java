@@ -28,11 +28,13 @@ public class PastebinSettings implements PersistentStateComponent<Element> {
   private static final String SETTINGS_TAG = "PastebinSettings";
   private static final String LOGIN = "Login";
   private static final String PASSWORD = "Password";
+  private static final String CLIPBOARD = "CopyToClipboard";
   private static final String ID = "LoginId";
 
   private String myLogin;
   private String myPassword;
   private String loginID;
+  private boolean copyToClipboard;
 
   public static PastebinSettings getInstance() {
     return ServiceManager.getService(PastebinSettings.class);
@@ -46,6 +48,7 @@ public class PastebinSettings implements PersistentStateComponent<Element> {
     element.setAttribute(LOGIN, getLogin());
     element.setAttribute(PASSWORD, getEncodedPassword());
     element.setAttribute(ID, getLoginId());
+    element.setAttribute(CLIPBOARD, String.valueOf(getCopyToClipboard()));
     return element;
   }
 
@@ -66,6 +69,7 @@ public class PastebinSettings implements PersistentStateComponent<Element> {
       setLogin(element.getAttributeValue(LOGIN));
       setEncodedPassword(element.getAttributeValue(PASSWORD));
       setLoginID(element.getAttributeValue(ID));
+      setCopyToClipboard(Boolean.valueOf(element.getAttributeValue(CLIPBOARD)));
     } catch (Exception e) {
       // ignore
     }
@@ -79,6 +83,10 @@ public class PastebinSettings implements PersistentStateComponent<Element> {
   @NotNull
   public String getPassword() {
     return myPassword != null ? myPassword : "";
+  }
+
+  public boolean getCopyToClipboard() {
+    return copyToClipboard;
   }
 
   public String getLoginId() {
@@ -95,6 +103,10 @@ public class PastebinSettings implements PersistentStateComponent<Element> {
 
   public void setLoginID(@Nullable final String loginID) {
     this.loginID = loginID != null ? loginID : "";
+  }
+
+  public void setCopyToClipboard(boolean b) {
+    copyToClipboard = b;
   }
 }
 

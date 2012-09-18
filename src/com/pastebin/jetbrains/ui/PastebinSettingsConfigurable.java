@@ -36,21 +36,24 @@ public class PastebinSettingsConfigurable implements SearchableConfigurable {
 
   public JComponent createComponent() {
     if (mySettingsPane == null) {
-      mySettingsPane = new PastebinSettingsPanel();
+      mySettingsPane = new PastebinSettingsPanel(mySettings.getCopyToClipboard());
     }
     reset();
     return mySettingsPane.getPanel();
   }
 
   public boolean isModified() {
-    return mySettingsPane == null || !mySettings.getLogin().equals(mySettingsPane.getLogin()) ||
-        !mySettings.getPassword().equals(mySettingsPane.getPassword());
+    return mySettingsPane == null
+        || !mySettings.getLogin().equals(mySettingsPane.getLogin())
+        || !mySettings.getPassword().equals(mySettingsPane.getPassword())
+        || !mySettings.getCopyToClipboard() == mySettingsPane.getCopyToClipboard();
   }
 
   public void apply() throws ConfigurationException {
     if (mySettingsPane != null) {
       mySettings.setLogin(mySettingsPane.getLogin());
       mySettings.setPassword(mySettingsPane.getPassword());
+      mySettings.setCopyToClipboard(mySettingsPane.getCopyToClipboard());
     }
   }
 
@@ -58,6 +61,7 @@ public class PastebinSettingsConfigurable implements SearchableConfigurable {
     if (mySettingsPane != null) {
       mySettingsPane.setLogin(mySettings.getLogin());
       mySettingsPane.setPassword(mySettings.getPassword());
+      mySettingsPane.setCopyToClipboard(mySettings.getCopyToClipboard());
     }
   }
 

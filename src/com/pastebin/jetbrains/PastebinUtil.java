@@ -7,15 +7,9 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.net.HttpConfigurable;
 import com.pastebin.jetbrains.ui.PastebinLoginDialog;
 import com.pastebin.jetbrains.ui.PastebinSubmitDialog;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.PostMethod;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -52,7 +46,7 @@ public class PastebinUtil {
   private List<Paste> getPasteList(@Nullable NameValuePair[] pairs) throws PastebinException {
     try {
       final Element rootElement = new SAXBuilder(false).build(new StringReader(RequestUtil.request(pairs))).getRootElement();
-      final List pastes = rootElement.getChildren(PastebinBundle.message("paste"));
+      final List pastes = rootElement.getChildren(PastebinBundle.message(PastebinBundle.message("dom.paste")));
       final List<Paste> list = new ArrayList<Paste>();
       for (Object o : pastes) {
         if (!(o instanceof Element)) {
@@ -116,6 +110,7 @@ public class PastebinUtil {
 
 
   public static void submitPaste(Project project, String text) {
+    final PastebinSettings settings = PastebinSettings.getInstance();
     final PastebinSubmitDialog submitDialog = new PastebinSubmitDialog(project, text);
     submitDialog.show();
     if (!submitDialog.isOK()) {
@@ -125,7 +120,6 @@ public class PastebinUtil {
 
     String userKey = null;
     if (paste.getAccessType() != Paste.AccessType.UNLISTED) {
-      final PastebinSettings settings = PastebinSettings.getInstance();
       final boolean logged = checkCredentials(settings.getLogin(), settings.getPassword());
       if (logged) {
         userKey = settings.getLoginId();
@@ -140,8 +134,13 @@ public class PastebinUtil {
     try {
       final String response =
           RequestUtil.request(RequestUtil.constructCreateParameters(paste, userKey));
-      showNotification(PastebinBundle.message("success"), PastebinBundle.message("paste.created", response), true);
-      copyToClipboard(response);
+      final boolean clipboard = settings.getCopyToClipboard();
+      showNotification(PastebinBundle.message("success"),
+          PastebinBundle.message("paste.created", response) +
+              (clipboard ? PastebinBundle.message("clipboard.copied") : ""), true);
+      if (clipboard) {
+        copyToClipboard(response);
+      }
     } catch (PastebinException e1) {
       showNotification(PastebinBundle.message("failure"), e1.getMessage(), false);
     }

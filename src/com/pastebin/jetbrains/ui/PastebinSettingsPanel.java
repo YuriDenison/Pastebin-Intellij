@@ -24,11 +24,9 @@ public class PastebinSettingsPanel {
 
   private JButton myTestButton;
   private JTextPane mySignupPane;
-  private JTabbedPane pastePanel;
-  private JPanel userTab;
-  private JPanel trendingTab;
+  private JCheckBox myClipboardCheckbox;
 
-  public PastebinSettingsPanel() {
+  public PastebinSettingsPanel(final boolean copyToClipboard) {
     String msg = PastebinBundle.message("signup.on.pastebin", "http://pastebin.com/login");
     mySignupPane.setText(msg);
     mySignupPane.setBackground(myPane.getBackground());
@@ -48,6 +46,9 @@ public class PastebinSettingsPanel {
             result ? PastebinBundle.message("success") : PastebinBundle.message("failure"));
       }
     });
+
+    myClipboardCheckbox.setText(PastebinBundle.message("clipboard.setting"));
+    myClipboardCheckbox.setSelected(copyToClipboard);
   }
 
   public JComponent getPanel() {
@@ -68,5 +69,13 @@ public class PastebinSettingsPanel {
 
   public String getPassword() {
     return String.valueOf(myPasswordField.getPassword());
+  }
+
+  public boolean getCopyToClipboard() {
+    return myClipboardCheckbox.isSelected();
+  }
+
+  public void setCopyToClipboard(boolean b) {
+    myClipboardCheckbox.setSelected(b);
   }
 }
