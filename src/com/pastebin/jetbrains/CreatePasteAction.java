@@ -1,14 +1,15 @@
 package com.pastebin.jetbrains;
 
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.project.Project;
-import com.pastebin.jetbrains.ui.PastebinLoginDialog;
-import com.pastebin.jetbrains.ui.PastebinSubmitDialog;
 
 /**
  * @author Yuri Denison
@@ -32,9 +33,6 @@ public class CreatePasteAction extends EditorAction {
     @Override
     public void execute(Editor editor, DataContext dataContext) {
       final Project project = LangDataKeys.PROJECT.getData(dataContext);
-      if (editor == null) {
-        return;
-      }
       final Document document = editor.getDocument();
       final SelectionModel selectionModel = editor.getSelectionModel();
 
