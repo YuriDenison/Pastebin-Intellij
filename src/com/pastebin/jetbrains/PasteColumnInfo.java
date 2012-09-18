@@ -5,4 +5,5 @@ package com.pastebin.jetbrains;
  * @date 9/18/12
  */
 public class PasteColumnInfo {
+
 }

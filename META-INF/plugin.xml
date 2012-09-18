@@ -17,7 +17,7 @@
         </action>
     </actions>
     <extensions defaultExtensionNs="com.intellij">
-        <applicationConfigurable instance="com.pastebin.jetbrains.ui.settings.PastebinSettingsConfigurable"/>
+        <applicationConfigurable instance="com.pastebin.jetbrains.ui.PastebinSettingsConfigurable"/>
         <applicationService serviceInterface="com.pastebin.jetbrains.PastebinSettings"
                             serviceImplementation="com.pastebin.jetbrains.PastebinSettings"/>
     </extensions>
