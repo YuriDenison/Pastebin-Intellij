@@ -93,9 +93,15 @@ public class PasteTableModel extends AbstractTableModel implements SortableColum
   public void updateModel() {
     try {
       if (category.equals(categories[0])) {
-        pastes = PastebinUtil.getTrendPasteList();
+        final List<Paste> trends = PastebinUtil.getTrendPasteList();
+        if (trends != null) {
+          pastes = trends;
+        }
       } else if (category.equals(categories[1])) {
-        pastes = PastebinUtil.getUserPasteList(LIMIT);
+        final List<Paste> user = PastebinUtil.getUserPasteList(LIMIT);
+        if (user != null) {
+          pastes = user;
+        }
       }
     } catch (PastebinException e) {
       PastebinUtil.showNotification(PastebinBundle.message("failure"), e.getMessage(), false);

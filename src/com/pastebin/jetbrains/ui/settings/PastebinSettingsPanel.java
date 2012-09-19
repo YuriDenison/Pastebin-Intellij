@@ -8,6 +8,7 @@ import com.pastebin.jetbrains.PastebinUtil;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -51,7 +52,8 @@ public class PastebinSettingsPanel {
     myClipboardCheckbox.setText(PastebinBundle.message("clipboard.setting"));
     myClipboardCheckbox.setSelected(copyToClipboard);
 
-    listPanel.add(new PasteTableMain().getMainPanel());
+    listPanel.setLayout(new BorderLayout());
+    listPanel.add(new PasteTableMain().getMainPanel(), BorderLayout.CENTER);
   }
 
   public JComponent getPanel() {

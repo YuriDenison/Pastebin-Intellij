@@ -20,20 +20,7 @@ public class PasteTable extends JBTable {
   public PasteTable(final PasteTableModel model) {
     super(model);
     getColumnModel().setColumnMargin(0);
-    for (int i = 0; i < model.getColumnCount(); i++) {
-      TableColumn column = getColumnModel().getColumn(i);
-      final ColumnInfo columnInfo = model.getColumnInfos()[i];
-      column.setCellEditor(columnInfo.getEditor(null));
-      if (columnInfo.getColumnClass() == Boolean.class) {
-        final int width = new JCheckBox().getPreferredSize().width;
-        column.setWidth(width);
-        column.setPreferredWidth(width);
-        column.setMaxWidth(width);
-        column.setMinWidth(width);
-      }
-    }
-
-    setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+    setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     setShowGrid(false);
     setStriped(true);
   }

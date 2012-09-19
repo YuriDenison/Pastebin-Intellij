@@ -48,7 +48,7 @@ public class PasteTableMain {
     JScrollPane installedScrollPane = createTable();
     installTableActions(pasteTable);
 
-    tablePanel.add(installedScrollPane);
+    tablePanel.add(installedScrollPane, BorderLayout.CENTER);
 
     toolbarPanel.setLayout(new BorderLayout());
     actionToolbar = ActionManager.getInstance().createActionToolbar(PastebinBundle.message("action.toolbar.title"), getActionGroup(), true);
