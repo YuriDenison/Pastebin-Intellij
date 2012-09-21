@@ -1,10 +1,11 @@
-package com.pastebin.jetbrains;
+package com.pastebin.jetbrains.table;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.ColumnInfo;
+import com.pastebin.jetbrains.Paste;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;

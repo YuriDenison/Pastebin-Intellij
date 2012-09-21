@@ -1,4 +1,4 @@
-package com.pastebin.jetbrains;
+package com.pastebin.jetbrains.util;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -7,6 +7,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.text.StringUtil;
+import com.pastebin.jetbrains.Paste;
+import com.pastebin.jetbrains.PastebinBundle;
+import com.pastebin.jetbrains.PastebinException;
+import com.pastebin.jetbrains.PastebinSettings;
 import com.pastebin.jetbrains.ui.PastebinLoginDialog;
 import com.pastebin.jetbrains.ui.PastebinSubmitDialog;
 import org.apache.commons.httpclient.NameValuePair;

@@ -9,7 +9,12 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.ui.FilterComponent;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.ScrollPaneFactory;
-import com.pastebin.jetbrains.*;
+import com.pastebin.jetbrains.Paste;
+import com.pastebin.jetbrains.PastebinBundle;
+import com.pastebin.jetbrains.table.PasteColumnInfo;
+import com.pastebin.jetbrains.table.PasteTable;
+import com.pastebin.jetbrains.table.PasteTableModel;
+import com.pastebin.jetbrains.util.PastebinUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

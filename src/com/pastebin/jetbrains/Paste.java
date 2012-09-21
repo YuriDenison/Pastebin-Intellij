@@ -1,5 +1,7 @@
 package com.pastebin.jetbrains;
 
+import com.pastebin.jetbrains.util.PastebinUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 

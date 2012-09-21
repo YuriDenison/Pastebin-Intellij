@@ -1,7 +1,9 @@
-package com.pastebin.jetbrains;
+package com.pastebin.jetbrains.util;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.net.HttpConfigurable;
+import com.pastebin.jetbrains.Paste;
+import com.pastebin.jetbrains.PastebinException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
@@ -40,7 +42,7 @@ public class RequestUtil {
   }
 
   @Nullable
-  public static String request(@Nullable NameValuePair[] pairs) throws PastebinException {
+  protected static String request(@Nullable NameValuePair[] pairs) throws PastebinException {
     final HttpClient client = getClient();
     final HttpMethod res = new PostMethod(POST_URL);
     if (pairs != null) {
@@ -61,7 +63,7 @@ public class RequestUtil {
     }
   }
 
-  public static String request(String login, String password) throws PastebinException {
+  protected static String request(String login, String password) throws PastebinException {
     final HttpClient client = getClient();
     final HttpMethod res = new PostMethod(LOGIN_URL);
     ((PostMethod) res).setRequestBody(new NameValuePair[]{
@@ -84,14 +86,14 @@ public class RequestUtil {
     }
   }
 
-  public static NameValuePair[] constructTrendsParameters() {
+  protected static NameValuePair[] constructTrendsParameters() {
     return new NameValuePair[]{
         new NameValuePair("api_option", "trends"),
         new NameValuePair("api_dev_key", API_KEY)
     };
   }
 
-  public static NameValuePair[] constructListParameters(final String userKey, final int limit) {
+  protected static NameValuePair[] constructListParameters(final String userKey, final int limit) {
     return new NameValuePair[]{
         new NameValuePair("api_option", "list"),
         new NameValuePair("api_dev_key", API_KEY),
@@ -100,7 +102,7 @@ public class RequestUtil {
     };
   }
 
-  public static NameValuePair[] constructCreateParameters(final Paste paste, @Nullable final String userKey) {
+  protected static NameValuePair[] constructCreateParameters(final Paste paste, @Nullable final String userKey) {
     final List<NameValuePair> list = new ArrayList<NameValuePair>();
     list.add(new NameValuePair("api_option", "paste"));
     list.add(new NameValuePair("api_dev_key", API_KEY));
@@ -123,7 +125,7 @@ public class RequestUtil {
   }
 
 
-  public static String getRawPasteText(String key) {
+  protected static String getRawPasteText(String key) {
     final HttpClient client = getClient();
     final HttpMethod res = new PostMethod(RAW_URL + key);
     final String s;

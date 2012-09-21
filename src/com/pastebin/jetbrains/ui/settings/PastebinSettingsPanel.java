@@ -5,7 +5,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.pastebin.jetbrains.PastebinBundle;
-import com.pastebin.jetbrains.PastebinUtil;
+import com.pastebin.jetbrains.util.PastebinUtil;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;

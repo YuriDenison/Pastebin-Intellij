@@ -1,9 +1,11 @@
-package com.pastebin.jetbrains;
+package com.pastebin.jetbrains.table;
 
 import com.intellij.openapi.util.Comparing;
 import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.UIUtil;
+import com.pastebin.jetbrains.Paste;
+import com.pastebin.jetbrains.PastebinBundle;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

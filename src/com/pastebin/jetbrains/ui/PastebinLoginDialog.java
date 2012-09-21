@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.pastebin.jetbrains.PastebinBundle;
 import com.pastebin.jetbrains.PastebinSettings;
-import com.pastebin.jetbrains.PastebinUtil;
+import com.pastebin.jetbrains.util.PastebinUtil;
 
 import javax.swing.*;
 

@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.project.Project;
+import com.pastebin.jetbrains.util.PastebinUtil;
 
 /**
  * @author Yuri Denison

@@ -3,8 +3,8 @@ package com.pastebin.jetbrains.ui;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.pastebin.jetbrains.PastebinSettings;
-import com.pastebin.jetbrains.PastebinUtil;
 import com.pastebin.jetbrains.ui.settings.PastebinSettingsPanel;
+import com.pastebin.jetbrains.util.PastebinUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

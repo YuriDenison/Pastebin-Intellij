@@ -1,7 +1,11 @@
-package com.pastebin.jetbrains;
+package com.pastebin.jetbrains.table;
 
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.SortableColumnModel;
+import com.pastebin.jetbrains.Paste;
+import com.pastebin.jetbrains.PastebinBundle;
+import com.pastebin.jetbrains.PastebinException;
+import com.pastebin.jetbrains.util.PastebinUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
