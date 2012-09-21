@@ -22,9 +22,9 @@ public class PasteColumnInfo extends ColumnInfo<Paste, String> {
   public static final int COLUMN_HITS = 2;
 
   public static final String[] COLUMNS = {
-      PastebinBundle.message("column.name"),
-      PastebinBundle.message("column.date"),
-      PastebinBundle.message("column.hits"),
+      PastebinBundle.message("column.title.name"),
+      PastebinBundle.message("column.title.date"),
+      PastebinBundle.message("column.title.hits"),
   };
 
   private final int columnIdx;
@@ -43,7 +43,7 @@ public class PasteColumnInfo extends ColumnInfo<Paste, String> {
       case COLUMN_NAME:
         return paste.getName();
       case COLUMN_DATE:
-        return DateFormatUtil.formatPrettyDate(paste.getDate());
+        return DateFormatUtil.formatDate(paste.getDate());
       case COLUMN_HITS:
         return String.valueOf(paste.getHits());
       default:
@@ -97,7 +97,7 @@ public class PasteColumnInfo extends ColumnInfo<Paste, String> {
     private final Paste paste;
 
     private PasteRenderer(Paste paste) {
-      myLabel.setFont(UIUtil.getLabelFont(UIUtil.FontSize.NORMAL));
+      myLabel.setFont(UIUtil.getLabelFont(UIUtil.FontSize.SMALL));
       myLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 2, 2));
       this.paste = paste;
     }
@@ -117,7 +117,7 @@ public class PasteColumnInfo extends ColumnInfo<Paste, String> {
           myLabel.setHorizontalAlignment(SwingConstants.LEFT);
           break;
         case COLUMN_DATE:
-          myLabel.setText(DateFormatUtil.formatPrettyDate(paste.getDate()));
+          myLabel.setText(DateFormatUtil.formatDate(paste.getDate()));
           myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
           break;
         case COLUMN_HITS:

@@ -24,10 +24,9 @@ import java.net.URL;
 
 /**
  * @author Yuri Denison
- * @date 9/18/12
+ * @date 19.09.12
  */
-public class PasteTableMain {
-  private JPanel main;
+public class PasteTablePanel extends JPanel {
   private JPanel tablePanel;
   private JPanel codePanel;
   private JPanel toolbarPanel;
@@ -39,8 +38,15 @@ public class PasteTableMain {
   protected PasteTableModel pasteModel;
   private FilterComponent filter;
 
-  public PasteTableMain() {
-    GuiUtils.replaceJSplitPaneWithIDEASplitter(main);
+  public PasteTablePanel() {
+    super(new BorderLayout());
+    toolbarPanel = new JPanel(new BorderLayout());
+    add(toolbarPanel, BorderLayout.NORTH);
+    tablePanel = new JPanel(new BorderLayout());
+    codePanel = new JPanel(new BorderLayout());
+    add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, codePanel), BorderLayout.CENTER);
+
+    GuiUtils.replaceJSplitPaneWithIDEASplitter(this);
     initCodePanel();
 
     codePane.addHyperlinkListener(new MyHyperlinkListener());
@@ -59,30 +65,27 @@ public class PasteTableMain {
 
   private void installTableActions(final PasteTable pasteTable) {
     pasteTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      @Override
       public void valueChanged(ListSelectionEvent e) {
-        final Paste[] pastes = pasteTable.getSelectedObjects();
-        updateCodePanel(pastes != null && pastes.length == 1 ? pastes[0] : null,
-            filter.getFilter(), codePane);
+        final Paste paste = pasteTable.getSelectedObject();
+        updateCodePanel(paste, codePane);
         actionToolbar.updateActionsImmediately();
       }
     });
   }
 
-  private void updateCodePanel(Paste paste, String filter, JTextPane codePane) {
+  private void updateCodePanel(Paste paste, JTextPane codePane) {
     //TODO: assync
     codePane.setText(paste.getText());
-  }
-
-  public JPanel getMainPanel() {
-    return main;
   }
 
   private JScrollPane createTable() {
     pasteModel = new PasteTableModel();
     pasteTable = new PasteTable(pasteModel);
     pasteTable.getTableHeader().setReorderingAllowed(false);
-    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_HITS, 50);
-    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_DATE, 60);
+    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_HITS, 60);
+    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_DATE, 70);
+    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_NAME, 200);
 
     return ScrollPaneFactory.createScrollPane(pasteTable);
   }
@@ -165,7 +168,7 @@ public class PasteTableMain {
     @Override
     public void actionPerformed(AnActionEvent e) {
       pasteModel.updateModel();
-      filter.setFilter("");
+//      filter.setFilter("");
     }
   }
 

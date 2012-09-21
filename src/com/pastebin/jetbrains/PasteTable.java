@@ -79,16 +79,4 @@ public class PasteTable extends JBTable {
     }
     return selected;
   }
-
-  public Paste[] getSelectedObjects() {
-    Paste[] selection = null;
-    if (getSelectedRowCount() > 0) {
-      int[] poses = getSelectedRows();
-      selection = new Paste[poses.length];
-      for (int i = 0; i < poses.length; i++) {
-        selection[i] = getObjectAt(poses[i]);
-      }
-    }
-    return selection;
-  }
 }

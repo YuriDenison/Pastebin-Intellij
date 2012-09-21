@@ -32,6 +32,8 @@ public class PastebinUtil {
 
   public static final String PASTEBIN = "Pastebin";
   public static final Icon ICON = IconLoader.getIcon("res/pastebin.png", PastebinUtil.class);
+  private static final String DOM_START = "<list>";
+  private static final String DOM_END = "</list>";
 
 
   public static List<Paste> getTrendPasteList() throws PastebinException {
@@ -45,22 +47,23 @@ public class PastebinUtil {
   @Nullable
   private static List<Paste> getPasteList(@Nullable NameValuePair[] pairs) throws PastebinException {
     try {
-      final Element rootElement = new SAXBuilder(false).build(new StringReader(RequestUtil.request(pairs))).getRootElement();
-      final List pastes = rootElement.getChildren(PastebinBundle.message(PastebinBundle.message("dom.paste")));
+      final String request = RequestUtil.request(pairs);
+      final Element rootElement = new SAXBuilder(false).build(new StringReader(DOM_START + request + DOM_END)).getRootElement();
+      final List pastes = rootElement.getChildren(PastebinBundle.message("dom.paste"));
       final List<Paste> list = new ArrayList<Paste>();
       for (Object o : pastes) {
         if (!(o instanceof Element)) {
           continue;
         }
         final Element element = (Element) o;
-        final String name = element.getAttributeValue(PastebinBundle.message("dom.title"));
-        final String key = element.getAttributeValue(PastebinBundle.message("dom.key"));
-        final String url = element.getAttributeValue(PastebinBundle.message("dom.url"));
-        final String language = element.getAttributeValue(PastebinBundle.message("dom.language"));
-        final int hits = Integer.parseInt(element.getAttributeValue(PastebinBundle.message("dom.hits")));
-        final long date = Long.parseLong(element.getAttributeValue(PastebinBundle.message("dom.date")));
-        final Paste.AccessType accessType = Paste.AccessType.getAccessType(Integer.parseInt(element.getAttributeValue(PastebinBundle.message("dom.access.type"))));
-        final Paste.ExpireDate expireDate = Paste.ExpireDate.getExpireDate(element.getAttributeValue(PastebinBundle.message("dom.expire.date")));
+        final String name = element.getChildText(PastebinBundle.message("dom.title"));
+        final String key = element.getChildText(PastebinBundle.message("dom.key"));
+        final String url = element.getChildText(PastebinBundle.message("dom.url"));
+        final String language = element.getChildText(PastebinBundle.message("dom.language"));
+        final int hits = Integer.parseInt(element.getChildText(PastebinBundle.message("dom.hits")));
+        final long date = Long.parseLong(element.getChildText(PastebinBundle.message("dom.date")));
+        final Paste.AccessType accessType = Paste.AccessType.getAccessType(Integer.parseInt(element.getChildText(PastebinBundle.message("dom.access.type"))));
+        final Paste.ExpireDate expireDate = Paste.ExpireDate.getExpireDate(element.getChildText(PastebinBundle.message("dom.expire.date")));
 
         list.add(new Paste(name, language, expireDate, accessType, key, date, hits, url));
       }

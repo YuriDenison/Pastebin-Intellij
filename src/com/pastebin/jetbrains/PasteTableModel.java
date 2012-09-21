@@ -36,6 +36,7 @@ public class PasteTableModel extends AbstractTableModel implements SortableColum
         new PasteColumnInfo(PasteColumnInfo.COLUMN_HITS, this)
     };
     pastes = new ArrayList<Paste>();
+    category = categories[0];
     softKey = new RowSorter.SortKey(NAME_COLUMN, SortOrder.ASCENDING);
   }
 
@@ -103,6 +104,7 @@ public class PasteTableModel extends AbstractTableModel implements SortableColum
           pastes = user;
         }
       }
+      fireTableDataChanged();
     } catch (PastebinException e) {
       PastebinUtil.showNotification(PastebinBundle.message("failure"), e.getMessage(), false);
     }
