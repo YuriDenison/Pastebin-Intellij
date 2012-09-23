@@ -124,6 +124,15 @@ public class RequestUtil {
     return list.toArray(new NameValuePair[list.size()]);
   }
 
+  protected static NameValuePair[] constructDeleteParameters(final String userKey, final String key) {
+    return new NameValuePair[]{
+        new NameValuePair("api_option", "delete"),
+        new NameValuePair("api_dev_key", API_KEY),
+        new NameValuePair("api_user_key", userKey),
+        new NameValuePair("api_paste_key", key)
+    };
+  }
+
 
   protected static String getRawPasteText(String key) {
     final HttpClient client = getClient();

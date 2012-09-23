@@ -1,6 +1,5 @@
 package com.pastebin.jetbrains.table;
 
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ArrayUtil;
@@ -60,7 +59,7 @@ public class PasteTable extends JBTable {
     return ((PasteTableModel) getModel()).getObjectAt(convertRowIndexToModel(row));
   }
 
-  public void select(IdeaPluginDescriptor... descriptors) {
+  public void select(Paste... descriptors) {
     PasteTableModel tableModel = (PasteTableModel) getModel();
     getSelectionModel().clearSelection();
     for (int i = 0; i < tableModel.getRowCount(); i++) {

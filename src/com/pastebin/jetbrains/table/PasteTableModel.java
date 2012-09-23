@@ -80,6 +80,11 @@ public class PasteTableModel extends AbstractTableModel implements SortableColum
   }
 
   @Override
+  public String getColumnName(int column) {
+    return columns[column].getName();
+  }
+
+  @Override
   public int getColumnCount() {
     return columns.length;
   }
@@ -122,8 +127,9 @@ public class PasteTableModel extends AbstractTableModel implements SortableColum
     return category;
   }
 
-  public void setCategory(String category, String filter) {
+  public void setCategory(String category) {
     this.category = category;
+    updateModel();
   }
 
 }

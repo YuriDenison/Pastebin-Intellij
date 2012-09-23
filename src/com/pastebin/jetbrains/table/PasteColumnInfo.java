@@ -91,16 +91,19 @@ public class PasteColumnInfo extends ColumnInfo<Paste, String> {
   @Nullable
   @Override
   public TableCellRenderer getRenderer(Paste paste) {
-    return new PasteRenderer(paste);
+    return new PasteRenderer(paste, columnIdx);
   }
 
   private static class PasteRenderer extends DefaultTableCellRenderer {
-    private final JLabel myLabel = new JLabel();
+    private final JLabel label = new JLabel();
     private final Paste paste;
 
-    private PasteRenderer(Paste paste) {
-      myLabel.setFont(UIUtil.getLabelFont(UIUtil.FontSize.SMALL));
-      myLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 2, 2));
+    private final Font nameFont = UIUtil.getLabelFont();
+    private final Font smallFont = UIUtil.getLabelFont(UIUtil.FontSize.SMALL);
+
+    private PasteRenderer(final Paste paste, int column) {
+      label.setFont(column == COLUMN_NAME ? nameFont : smallFont);
+      label.setBorder(BorderFactory.createEmptyBorder(0, 0, 2, 2));
       this.paste = paste;
     }
 
@@ -108,27 +111,26 @@ public class PasteColumnInfo extends ColumnInfo<Paste, String> {
       Component orig = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       final Color bg = orig.getBackground();
       final Color grayedFg = isSelected ? orig.getForeground() : Color.GRAY;
-      myLabel.setForeground(grayedFg);
-      myLabel.setBackground(bg);
-      myLabel.setOpaque(true);
+      label.setForeground(grayedFg);
+      label.setBackground(bg);
+      label.setOpaque(true);
 
       switch (column) {
         case COLUMN_NAME:
-          final String name = paste.getName();
-          myLabel.setText(name != null && !name.isEmpty() ? name : PastebinBundle.message("name.untitled"));
-          myLabel.setHorizontalAlignment(SwingConstants.LEFT);
+          label.setText(paste.getName());
+          label.setHorizontalAlignment(SwingConstants.LEFT);
           break;
         case COLUMN_DATE:
-          myLabel.setText(DateFormatUtil.formatDate(paste.getDate()));
-          myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+          label.setText(DateFormatUtil.formatDate(paste.getDate()));
+          label.setHorizontalAlignment(SwingConstants.RIGHT);
           break;
         case COLUMN_HITS:
-          myLabel.setText(paste.getHits() + "");
-          myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+          label.setText(paste.getHits() + "");
+          label.setHorizontalAlignment(SwingConstants.RIGHT);
           break;
       }
 
-      return myLabel;
+      return label;
     }
   }
 }

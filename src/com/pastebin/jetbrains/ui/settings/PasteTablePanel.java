@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.ui.FilterComponent;
@@ -11,6 +12,8 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.ScrollPaneFactory;
 import com.pastebin.jetbrains.Paste;
 import com.pastebin.jetbrains.PastebinBundle;
+import com.pastebin.jetbrains.PastebinException;
+import com.pastebin.jetbrains.PastebinSettings;
 import com.pastebin.jetbrains.table.PasteColumnInfo;
 import com.pastebin.jetbrains.table.PasteTable;
 import com.pastebin.jetbrains.table.PasteTableModel;
@@ -38,6 +41,7 @@ public class PasteTablePanel extends JPanel {
 
   private JTextPane codePane;
   private ActionToolbar actionToolbar;
+  private Component codeActionsComponent;
 
   protected PasteTable pasteTable;
   protected PasteTableModel pasteModel;
@@ -79,18 +83,27 @@ public class PasteTablePanel extends JPanel {
     });
   }
 
-  private void updateCodePanel(Paste paste, JTextPane codePane) {
-    //TODO: assync
-    codePane.setText(paste.getText());
+  private void updateCodePanel(final Paste paste, final JTextPane codePane) {
+    if (paste == null) {
+      return;
+    }
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        codeActionsComponent = updateCodePanelActionsToolBar();
+        codeActionsComponent.repaint();
+        codePane.setText(paste.getText());
+      }
+    });
   }
 
   private JScrollPane createTable() {
     pasteModel = new PasteTableModel();
     pasteTable = new PasteTable(pasteModel);
     pasteTable.getTableHeader().setReorderingAllowed(false);
-    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_HITS, 60);
-    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_DATE, 70);
-    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_NAME, 200);
+    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_HITS, 70);
+    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_DATE, 80);
+//    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_NAME, 200);
 
     return ScrollPaneFactory.createScrollPane(pasteTable);
   }
@@ -108,11 +121,20 @@ public class PasteTablePanel extends JPanel {
     final JPanel titlePanel = new JPanel(new BorderLayout());
     titlePanel.add(new JLabel(PastebinBundle.message("panel.code.title")), BorderLayout.LINE_START);
     titlePanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.CENTER);
-    titlePanel.add(new CodePanelActionsToolBar(), BorderLayout.LINE_END);
+    codeActionsComponent = updateCodePanelActionsToolBar();
+    titlePanel.add(codeActionsComponent, BorderLayout.LINE_END);
     codePane = new JTextPane();
     final JScrollPane scrollPane = ScrollPaneFactory.createScrollPane(codePane);
     codePanel.add(titlePanel, BorderLayout.NORTH);
     codePanel.add(scrollPane, BorderLayout.CENTER);
+  }
+
+  public Component updateCodePanelActionsToolBar() {
+    final DefaultActionGroup group = new DefaultActionGroup();
+    group.add(new LaunchBrowserAction());
+    group.add(new DeletePasteAction());
+    codeActionsComponent = ActionManager.getInstance().createActionToolbar(PastebinBundle.message("paste.toolbar.title"), group, true).getComponent();
+    return codeActionsComponent;
   }
 
   public static class MyHyperlinkListener implements HyperlinkListener {
@@ -156,8 +178,8 @@ public class PasteTablePanel extends JPanel {
       return new AnAction(availableCategory) {
         @Override
         public void actionPerformed(AnActionEvent e) {
-          final String f = filter.getFilter().toLowerCase();
-          pasteModel.setCategory(availableCategory, f);
+//          final String f = filter.getFilter().toLowerCase();
+          pasteModel.setCategory(availableCategory);
         }
       };
     }
@@ -172,7 +194,14 @@ public class PasteTablePanel extends JPanel {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-      pasteModel.updateModel();
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          pasteModel.updateModel();
+          codePane.setText("");
+          updateCodePanelActionsToolBar();
+        }
+      });
 //      filter.setFilter("");
     }
   }
@@ -185,6 +214,53 @@ public class PasteTablePanel extends JPanel {
 
     public SubmitNewPasteAction() {
       super(PastebinBundle.message("submit.title"), PastebinBundle.message("submit.title").toLowerCase(), PastebinUtil.ICON);
+    }
+  }
+
+  private class DeletePasteAction extends DumbAwareAction {
+    private DeletePasteAction() {
+      super(PastebinBundle.message("delete.paste"), PastebinBundle.message("delete.paste").toLowerCase(), AllIcons.Actions.Delete);
+    }
+
+    @Override
+    public void update(AnActionEvent e) {
+      super.update(e);
+      e.getPresentation().setEnabled(pasteModel.getCategory().equals(PasteTableModel.categories[1]) && pasteTable.getSelectedObject() != null);
+    }
+
+    @Override
+    public void actionPerformed(AnActionEvent anActionEvent) {
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          final Paste paste = pasteTable.getSelectedObject();
+          try {
+            final boolean res = PastebinUtil.deletePaste(paste.getKey(), PastebinSettings.getInstance().getLoginId());
+            final String title = res ? PastebinBundle.message("success") : PastebinBundle.message("failure");
+            final String message = res ? PastebinBundle.message("paste.deleted") : PastebinBundle.message("network.error");
+            PastebinUtil.showNotification(title, message, res);
+          } catch (PastebinException e) {
+            PastebinUtil.showNotification(PastebinBundle.message("failure"), e.getMessage(), false);
+          }
+        }
+      });
+    }
+  }
+
+  private class LaunchBrowserAction extends DumbAwareAction {
+    private LaunchBrowserAction() {
+      super(PastebinBundle.message("browser.action"), PastebinBundle.message("browser.action").toLowerCase(), AllIcons.Xml.Browsers.Explorer16);
+    }
+
+    @Override
+    public void update(AnActionEvent e) {
+      super.update(e);
+      e.getPresentation().setEnabled(pasteTable.getSelectedObject() != null);
+    }
+
+    @Override
+    public void actionPerformed(AnActionEvent anActionEvent) {
+      BrowserUtil.launchBrowser(pasteTable.getSelectedObject().getUrl());
     }
   }
 }

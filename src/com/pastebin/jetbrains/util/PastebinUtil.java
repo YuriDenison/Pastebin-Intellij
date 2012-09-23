@@ -4,6 +4,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.text.StringUtil;
@@ -20,7 +21,6 @@ import org.jdom.input.SAXBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.io.StringReader;
@@ -35,7 +35,7 @@ public class PastebinUtil {
   private static final Logger LOG = Logger.getInstance(PastebinUtil.class);
 
   public static final String PASTEBIN = "Pastebin";
-  public static final Icon ICON = IconLoader.getIcon("res/pastebin.png", PastebinUtil.class);
+  public static final Icon ICON = IconLoader.getIcon("/com/pastebin/jetbrains/res/pastebin.png", PastebinUtil.class);
   private static final String DOM_START = "<list>";
   private static final String DOM_END = "</list>";
 
@@ -46,6 +46,11 @@ public class PastebinUtil {
 
   public static List<Paste> getUserPasteList(final int limit) throws PastebinException {
     return getPasteList(RequestUtil.constructListParameters(PastebinSettings.getInstance().getLoginId(), limit));
+  }
+
+  public static boolean deletePaste(final String key, final String userKey) throws PastebinException {
+    final String request = RequestUtil.request(RequestUtil.constructDeleteParameters(userKey, key));
+    return request != null;
   }
 
   @Nullable
@@ -60,7 +65,10 @@ public class PastebinUtil {
           continue;
         }
         final Element element = (Element) o;
-        final String name = element.getChildText(PastebinBundle.message("dom.title"));
+        String name = element.getChildText(PastebinBundle.message("dom.title"));
+        if (name == null || name.isEmpty()) {
+          name = PastebinBundle.message("name.untitled");
+        }
         final String key = element.getChildText(PastebinBundle.message("dom.key"));
         final String url = element.getChildText(PastebinBundle.message("dom.url"));
         final String language = element.getChildText(PastebinBundle.message("dom.language"));
@@ -89,8 +97,7 @@ public class PastebinUtil {
 
 
   private static void copyToClipboard(String str) {
-    StringSelection selection = new StringSelection(str);
-    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+    CopyPasteManager.getInstance().setContents(new StringSelection(str));
   }
 
   public static boolean checkCredentials(final String login, final String password) {
@@ -143,6 +150,10 @@ public class PastebinUtil {
     try {
       final String response =
           RequestUtil.request(RequestUtil.constructCreateParameters(paste, userKey));
+      if (response == null) {
+        showNotification(PastebinBundle.message("failure"), PastebinBundle.message("network.error"), false);
+        return;
+      }
       final boolean clipboard = settings.getCopyToClipboard();
       showNotification(PastebinBundle.message("success"),
           PastebinBundle.message("paste.created", response) +
