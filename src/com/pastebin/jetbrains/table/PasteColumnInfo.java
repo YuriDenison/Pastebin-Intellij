@@ -45,7 +45,7 @@ public class PasteColumnInfo extends ColumnInfo<Paste, String> {
       case COLUMN_NAME:
         return paste.getName();
       case COLUMN_DATE:
-        return DateFormatUtil.formatDate(paste.getDate());
+        return DateFormatUtil.formatPrettyDate(paste.getDate() * 1000);
       case COLUMN_HITS:
         return String.valueOf(paste.getHits());
       default:
@@ -121,7 +121,7 @@ public class PasteColumnInfo extends ColumnInfo<Paste, String> {
           label.setHorizontalAlignment(SwingConstants.LEFT);
           break;
         case COLUMN_DATE:
-          label.setText(DateFormatUtil.formatDate(paste.getDate()));
+          label.setText(DateFormatUtil.formatPrettyDate(paste.getDate() * 1000));
           label.setHorizontalAlignment(SwingConstants.RIGHT);
           break;
         case COLUMN_HITS:

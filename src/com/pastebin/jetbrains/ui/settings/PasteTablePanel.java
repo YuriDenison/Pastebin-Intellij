@@ -4,12 +4,12 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.ui.FilterComponent;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.util.concurrency.SwingWorker;
 import com.pastebin.jetbrains.Paste;
 import com.pastebin.jetbrains.PastebinBundle;
 import com.pastebin.jetbrains.PastebinException;
@@ -35,6 +35,9 @@ import java.net.URL;
  * @date 19.09.12
  */
 public class PasteTablePanel extends JPanel {
+  private static final int HITS_WIDTH = 70;
+  private static final int DATE_WIDTH = 80;
+  private static final int NAME_WIRTH = 200;
   private JPanel tablePanel;
   private JPanel codePanel;
   private JPanel toolbarPanel;
@@ -52,6 +55,7 @@ public class PasteTablePanel extends JPanel {
     toolbarPanel = new JPanel(new BorderLayout());
     add(toolbarPanel, BorderLayout.NORTH);
     tablePanel = new JPanel(new BorderLayout());
+    tablePanel.setPreferredSize(new Dimension(HITS_WIDTH + DATE_WIDTH + NAME_WIRTH, -1));
     codePanel = new JPanel(new BorderLayout());
     add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, codePanel), BorderLayout.CENTER);
 
@@ -87,22 +91,33 @@ public class PasteTablePanel extends JPanel {
     if (paste == null) {
       return;
     }
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
+    setDownloadStatus(true);
+    new SwingWorker() {
+      private String text = "";
+
       @Override
-      public void run() {
+      public Object construct() {
         codeActionsComponent = updateCodePanelActionsToolBar();
         codeActionsComponent.repaint();
-        codePane.setText(paste.getText());
+        text = paste.getText();
+        return text;
       }
-    });
+
+      @Override
+      public void finished() {
+        codePane.setText(text);
+        setDownloadStatus(false);
+      }
+    }.start();
   }
 
   private JScrollPane createTable() {
     pasteModel = new PasteTableModel();
     pasteTable = new PasteTable(pasteModel);
     pasteTable.getTableHeader().setReorderingAllowed(false);
-    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_HITS, 70);
-    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_DATE, 80);
+    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_NAME, NAME_WIRTH);
+    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_HITS, HITS_WIDTH);
+    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_DATE, DATE_WIDTH);
 //    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_NAME, 200);
 
     return ScrollPaneFactory.createScrollPane(pasteTable);
@@ -115,6 +130,10 @@ public class PasteTablePanel extends JPanel {
     actionGroup.add(new SubmitNewPasteAction());
     actionGroup.add(new FilterCategoryAction());
     return actionGroup;
+  }
+
+  protected void setDownloadStatus(boolean status) {
+    pasteTable.setPaintBusy(status);
   }
 
   private void initCodePanel() {
@@ -179,7 +198,22 @@ public class PasteTablePanel extends JPanel {
         @Override
         public void actionPerformed(AnActionEvent e) {
 //          final String f = filter.getFilter().toLowerCase();
-          pasteModel.setCategory(availableCategory);
+          setDownloadStatus(true);
+          new SwingWorker() {
+            @Override
+            public Object construct() {
+              pasteModel.setCategory(availableCategory);
+              pasteModel.updateModel();
+              return null;
+            }
+
+            @Override
+            public void finished() {
+              codePane.setText("");
+              pasteModel.fireTableDataChanged();
+              setDownloadStatus(false);
+            }
+          }.start();
         }
       };
     }
@@ -194,14 +228,22 @@ public class PasteTablePanel extends JPanel {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
+      setDownloadStatus(true);
+      new SwingWorker() {
         @Override
-        public void run() {
+        public Object construct() {
           pasteModel.updateModel();
           codePane.setText("");
           updateCodePanelActionsToolBar();
+          return null;
         }
-      });
+
+        @Override
+        public void finished() {
+          pasteModel.fireTableDataChanged();
+          setDownloadStatus(false);
+        }
+      }.start();
 //      filter.setFilter("");
     }
   }
@@ -225,14 +267,15 @@ public class PasteTablePanel extends JPanel {
     @Override
     public void update(AnActionEvent e) {
       super.update(e);
-      e.getPresentation().setEnabled(pasteModel.getCategory().equals(PasteTableModel.categories[1]) && pasteTable.getSelectedObject() != null);
+      e.getPresentation().setEnabled(pasteModel.getCategory().equals(PasteTableModel.categories[1]) && pasteTable.getSelectedRowCount() != 0);
     }
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
+      setDownloadStatus(true);
+      new SwingWorker() {
         @Override
-        public void run() {
+        public Object construct() {
           final Paste paste = pasteTable.getSelectedObject();
           try {
             final boolean res = PastebinUtil.deletePaste(paste.getKey(), PastebinSettings.getInstance().getLoginId());
@@ -242,8 +285,15 @@ public class PasteTablePanel extends JPanel {
           } catch (PastebinException e) {
             PastebinUtil.showNotification(PastebinBundle.message("failure"), e.getMessage(), false);
           }
+          pasteModel.updateModel();
+          return null;
         }
-      });
+
+        @Override
+        public void finished() {
+          setDownloadStatus(false);
+        }
+      }.start();
     }
   }
 
@@ -255,7 +305,7 @@ public class PasteTablePanel extends JPanel {
     @Override
     public void update(AnActionEvent e) {
       super.update(e);
-      e.getPresentation().setEnabled(pasteTable.getSelectedObject() != null);
+      e.getPresentation().setEnabled(pasteTable.getSelectedRowCount() != 0);
     }
 
     @Override

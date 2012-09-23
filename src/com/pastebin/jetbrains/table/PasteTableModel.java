@@ -113,7 +113,6 @@ public class PasteTableModel extends AbstractTableModel implements SortableColum
           pastes = user;
         }
       }
-      fireTableDataChanged();
     } catch (PastebinException e) {
       PastebinUtil.showNotification(PastebinBundle.message("failure"), e.getMessage(), false);
     }
@@ -129,7 +128,6 @@ public class PasteTableModel extends AbstractTableModel implements SortableColum
 
   public void setCategory(String category) {
     this.category = category;
-    updateModel();
   }
 
 }

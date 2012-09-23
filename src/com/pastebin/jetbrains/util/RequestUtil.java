@@ -9,6 +9,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,7 +137,8 @@ public class RequestUtil {
 
   protected static String getRawPasteText(String key) {
     final HttpClient client = getClient();
-    final HttpMethod res = new PostMethod(RAW_URL + key);
+    final HttpMethod res = new GetMethod(RAW_URL + key);
+
     final String s;
     try {
       client.executeMethod(res);
