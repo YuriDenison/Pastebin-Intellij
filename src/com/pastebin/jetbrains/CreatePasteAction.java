@@ -38,7 +38,7 @@ public class CreatePasteAction extends EditorAction {
       final SelectionModel selectionModel = editor.getSelectionModel();
 
       final String text = selectionModel.hasSelection() ? selectionModel.getSelectedText() : document.getText();
-      PastebinUtil.submitPaste(project, text);
+      PastebinUtil.submitPaste(project, text, false);
     }
   }
 }

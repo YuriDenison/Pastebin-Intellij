@@ -3,11 +3,14 @@ package com.pastebin.jetbrains.util;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.concurrency.SwingWorker;
 import com.pastebin.jetbrains.Paste;
 import com.pastebin.jetbrains.PastebinBundle;
 import com.pastebin.jetbrains.PastebinException;
@@ -81,11 +84,11 @@ public class PastebinUtil {
       }
       return list;
     } catch (JDOMException e) {
-      showNotification(PastebinBundle.message("failure"), PastebinBundle.message("network.error"), false);
+      showNotification(PastebinBundle.message("failure"), PastebinBundle.message("network.error"), false, true);
       LOG.debug(e.getMessage());
       return null;
     } catch (IOException e) {
-      showNotification(PastebinBundle.message("failure"), PastebinBundle.message("network.error"), false);
+      showNotification(PastebinBundle.message("failure"), PastebinBundle.message("network.error"), false, true);
       LOG.debug(e.getMessage());
       return null;
     }
@@ -114,6 +117,8 @@ public class PastebinUtil {
   private static boolean testConnection(String login, String password) {
     try {
       String response = RequestUtil.request(login, password);
+      PastebinSettings.getInstance().setLogin(login);
+      PastebinSettings.getInstance().setPassword(password);
       PastebinSettings.getInstance().setLoginID(response);
       return true;
     } catch (PastebinException e) {
@@ -125,7 +130,7 @@ public class PastebinUtil {
   }
 
 
-  public static void submitPaste(Project project, String text) {
+  public static void submitPaste(final Project project, String text, final boolean inSettings) {
     final PastebinSettings settings = PastebinSettings.getInstance();
     final PastebinSubmitDialog submitDialog = new PastebinSubmitDialog(project, text);
     submitDialog.show();
@@ -134,40 +139,77 @@ public class PastebinUtil {
     }
     final Paste paste = submitDialog.getPaste();
 
-    String userKey = null;
-    if (paste.getAccessType() != Paste.AccessType.UNLISTED) {
-      final boolean logged = checkCredentials(settings.getLogin(), settings.getPassword());
-      if (logged) {
-        userKey = settings.getLoginId();
-      } else {
-        PastebinLoginDialog loginDialog = new PastebinLoginDialog(project);
-        loginDialog.show();
-        if (loginDialog.isOK()) {
-          userKey = settings.getLoginId();
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        String userKey = null;
+        if (paste.getAccessType() != Paste.AccessType.UNLISTED) {
+          final boolean logged = checkCredentials(settings.getLogin(), settings.getPassword());
+          if (logged) {
+            userKey = settings.getLoginId();
+          } else {
+            PastebinLoginDialog loginDialog = new PastebinLoginDialog(project);
+            loginDialog.show();
+            if (loginDialog.isOK()) {
+              userKey = settings.getLoginId();
+            }
+          }
         }
+        final String finalUserKey = userKey;
+
+        new SwingWorker() {
+          private Boolean result = false;
+          private boolean clipboard = false;
+          private String response;
+          private String error = "";
+
+          @Override
+          public Object construct() {
+            try {
+              response =
+                  RequestUtil.request(RequestUtil.constructCreateParameters(paste, finalUserKey));
+              result = true;
+              if (response == null) {
+                result = false;
+                return null;
+              }
+              clipboard = settings.getCopyToClipboard();
+              if (clipboard) {
+                copyToClipboard(response);
+              }
+            } catch (PastebinException e1) {
+              result = null;
+              error = e1.getMessage();
+            }
+            return null;
+          }
+
+          @Override
+          public void finished() {
+            if (result == null) {
+              showNotification(PastebinBundle.message("failure"), error, false, inSettings);
+              return;
+            }
+            if (result) {
+              showNotification(PastebinBundle.message("success"),
+                  PastebinBundle.message("paste.created", response) +
+                      (clipboard ? PastebinBundle.message("clipboard.copied") : ""), true, inSettings);
+
+            } else {
+              showNotification(PastebinBundle.message("failure"), PastebinBundle.message("network.error"), false, inSettings);
+            }
+          }
+        }.start();
       }
-    }
-    try {
-      final String response =
-          RequestUtil.request(RequestUtil.constructCreateParameters(paste, userKey));
-      if (response == null) {
-        showNotification(PastebinBundle.message("failure"), PastebinBundle.message("network.error"), false);
-        return;
-      }
-      final boolean clipboard = settings.getCopyToClipboard();
-      showNotification(PastebinBundle.message("success"),
-          PastebinBundle.message("paste.created", response) +
-              (clipboard ? PastebinBundle.message("clipboard.copied") : ""), true);
-      if (clipboard) {
-        copyToClipboard(response);
-      }
-    } catch (PastebinException e1) {
-      showNotification(PastebinBundle.message("failure"), e1.getMessage(), false);
-    }
+    });
   }
 
-  public static void showNotification(String title, String text, boolean success) {
-    Notifications.Bus.notify(new Notification("Pastebin", title, text, success ? NotificationType.INFORMATION : NotificationType.ERROR));
+  public static void showNotification(String title, String text, boolean success, boolean inSettings) {
+    if (!inSettings) {
+      Notifications.Bus.notify(new Notification("Pastebin", title, text, success ? NotificationType.INFORMATION : NotificationType.ERROR));
+    } else {
+      Messages.showInfoMessage(text, title);
+    }
   }
 
   public static boolean areCredentialsEmpty() {

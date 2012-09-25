@@ -24,7 +24,7 @@ public class PasteTableModel extends AbstractTableModel implements SortableColum
       PastebinBundle.message("category.user")
   };
   private static final int NAME_COLUMN = 0;
-  private static final int LIMIT = 20;
+  private static final int LIMIT = 50;
 
   protected ColumnInfo[] columns;
 
@@ -114,7 +114,7 @@ public class PasteTableModel extends AbstractTableModel implements SortableColum
         }
       }
     } catch (PastebinException e) {
-      PastebinUtil.showNotification(PastebinBundle.message("failure"), e.getMessage(), false);
+      PastebinUtil.showNotification(PastebinBundle.message("failure"), e.getMessage(), false, true);
     }
   }
 

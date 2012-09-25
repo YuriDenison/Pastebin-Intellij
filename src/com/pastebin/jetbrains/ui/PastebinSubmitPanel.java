@@ -99,7 +99,7 @@ public class PastebinSubmitPanel extends JPanel {
 
   public Paste getPaste() {
     return new Paste(code.getText(),
-        nameField.getName(),
+        nameField.getText(),
         (String) syntaxBox.getSelectedItem(),
         (Paste.ExpireDate) expirationBox.getSelectedItem(),
         (Paste.AccessType) exposureBox.getSelectedItem());

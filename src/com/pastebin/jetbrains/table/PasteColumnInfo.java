@@ -110,7 +110,7 @@ public class PasteColumnInfo extends ColumnInfo<Paste, String> {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       Component orig = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       final Color bg = orig.getBackground();
-      final Color grayedFg = isSelected ? orig.getForeground() : Color.GRAY;
+      final Color grayedFg = column == COLUMN_NAME || isSelected ? orig.getForeground() : Color.GRAY;
       label.setForeground(grayedFg);
       label.setBackground(bg);
       label.setOpaque(true);

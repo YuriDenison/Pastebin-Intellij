@@ -44,7 +44,7 @@ public class PasteTablePanel extends JPanel {
 
   private JTextPane codePane;
   private ActionToolbar actionToolbar;
-  private Component codeActionsComponent;
+  private ActionToolbar codeActionToolbar;
 
   protected PasteTable pasteTable;
   protected PasteTableModel pasteModel;
@@ -97,14 +97,13 @@ public class PasteTablePanel extends JPanel {
 
       @Override
       public Object construct() {
-        codeActionsComponent = updateCodePanelActionsToolBar();
-        codeActionsComponent.repaint();
         text = paste.getText();
         return text;
       }
 
       @Override
       public void finished() {
+        codeActionToolbar.updateActionsImmediately();
         codePane.setText(text);
         setDownloadStatus(false);
       }
@@ -140,20 +139,19 @@ public class PasteTablePanel extends JPanel {
     final JPanel titlePanel = new JPanel(new BorderLayout());
     titlePanel.add(new JLabel(PastebinBundle.message("panel.code.title")), BorderLayout.LINE_START);
     titlePanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.CENTER);
-    codeActionsComponent = updateCodePanelActionsToolBar();
-    titlePanel.add(codeActionsComponent, BorderLayout.LINE_END);
-    codePane = new JTextPane();
-    final JScrollPane scrollPane = ScrollPaneFactory.createScrollPane(codePane);
-    codePanel.add(titlePanel, BorderLayout.NORTH);
-    codePanel.add(scrollPane, BorderLayout.CENTER);
-  }
 
-  public Component updateCodePanelActionsToolBar() {
     final DefaultActionGroup group = new DefaultActionGroup();
     group.add(new LaunchBrowserAction());
     group.add(new DeletePasteAction());
-    codeActionsComponent = ActionManager.getInstance().createActionToolbar(PastebinBundle.message("paste.toolbar.title"), group, true).getComponent();
-    return codeActionsComponent;
+    codeActionToolbar = ActionManager.getInstance().createActionToolbar(PastebinBundle.message("paste.toolbar.title"), group, true);
+    codeActionToolbar.setReservePlaceAutoPopupIcon(true);
+    titlePanel.add(codeActionToolbar.getComponent(), BorderLayout.LINE_END);
+
+    codePane = new JTextPane();
+    final JScrollPane scrollPane = ScrollPaneFactory.createScrollPane(codePane);
+    scrollPane.setMaximumSize(scrollPane.getSize());
+    codePanel.add(titlePanel, BorderLayout.NORTH);
+    codePanel.add(scrollPane, BorderLayout.CENTER);
   }
 
   public static class MyHyperlinkListener implements HyperlinkListener {
@@ -198,7 +196,14 @@ public class PasteTablePanel extends JPanel {
         @Override
         public void actionPerformed(AnActionEvent e) {
 //          final String f = filter.getFilter().toLowerCase();
+          if (pasteModel.getCategory().equals(availableCategory)) {
+            return;
+          }
           setDownloadStatus(true);
+          if (availableCategory.equals(pasteModel.getAvailableCategories()[1]) && !PastebinUtil.checkCredentials("", null)) {
+            PastebinUtil.showNotification(PastebinBundle.message("failure"), PastebinBundle.message("login.first"), false, true);
+            return;
+          }
           new SwingWorker() {
             @Override
             public Object construct() {
@@ -234,12 +239,12 @@ public class PasteTablePanel extends JPanel {
         public Object construct() {
           pasteModel.updateModel();
           codePane.setText("");
-          updateCodePanelActionsToolBar();
           return null;
         }
 
         @Override
         public void finished() {
+          actionToolbar.updateActionsImmediately();
           pasteModel.fireTableDataChanged();
           setDownloadStatus(false);
         }
@@ -250,8 +255,18 @@ public class PasteTablePanel extends JPanel {
 
   public class SubmitNewPasteAction extends DumbAwareAction {
     @Override
-    public void actionPerformed(AnActionEvent anActionEvent) {
-      PastebinUtil.submitPaste(anActionEvent.getProject(), "");
+    public void actionPerformed(final AnActionEvent anActionEvent) {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          PastebinUtil.submitPaste(anActionEvent.getProject(), "", true);
+
+          if (pasteModel.getCategory().equals(pasteModel.getAvailableCategories()[1])) {
+            pasteModel.updateModel();
+            pasteModel.fireTableDataChanged();
+          }
+        }
+      });
     }
 
     public SubmitNewPasteAction() {
@@ -274,23 +289,37 @@ public class PasteTablePanel extends JPanel {
     public void actionPerformed(AnActionEvent anActionEvent) {
       setDownloadStatus(true);
       new SwingWorker() {
+        private Boolean deleted = false;
+        private String error = "";
+
         @Override
         public Object construct() {
           final Paste paste = pasteTable.getSelectedObject();
           try {
-            final boolean res = PastebinUtil.deletePaste(paste.getKey(), PastebinSettings.getInstance().getLoginId());
-            final String title = res ? PastebinBundle.message("success") : PastebinBundle.message("failure");
-            final String message = res ? PastebinBundle.message("paste.deleted") : PastebinBundle.message("network.error");
-            PastebinUtil.showNotification(title, message, res);
+            deleted = PastebinUtil.deletePaste(paste.getKey(), PastebinSettings.getInstance().getLoginId());
+            if (deleted) {
+              pasteModel.updateModel();
+            }
           } catch (PastebinException e) {
-            PastebinUtil.showNotification(PastebinBundle.message("failure"), e.getMessage(), false);
+            deleted = null;
+            error = e.getMessage();
           }
-          pasteModel.updateModel();
           return null;
         }
 
         @Override
         public void finished() {
+          if (deleted == null) {
+            PastebinUtil.showNotification(PastebinBundle.message("failure"), error, false, true);
+            return;
+          }
+          final String title = deleted ? PastebinBundle.message("success") : PastebinBundle.message("failure");
+          final String message = deleted ? PastebinBundle.message("paste.deleted") : PastebinBundle.message("network.error");
+          PastebinUtil.showNotification(title, message, deleted, true);
+
+          if (pasteModel.getCategory().equals(pasteModel.getAvailableCategories()[1])) {
+            pasteModel.fireTableDataChanged();
+          }
           setDownloadStatus(false);
         }
       }.start();
@@ -299,7 +328,7 @@ public class PasteTablePanel extends JPanel {
 
   private class LaunchBrowserAction extends DumbAwareAction {
     private LaunchBrowserAction() {
-      super(PastebinBundle.message("browser.action"), PastebinBundle.message("browser.action").toLowerCase(), AllIcons.Xml.Browsers.Explorer16);
+      super(PastebinBundle.message("browser.action"), PastebinBundle.message("browser.action").toLowerCase(), AllIcons.Ide.Link);
     }
 
     @Override

@@ -44,7 +44,9 @@ public class PastebinSettingsPanel {
 
     myTestButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        boolean result = PastebinUtil.checkCredentials(getLogin(), getPassword());
+        final String login = getLogin();
+        final String password = getPassword();
+        boolean result = PastebinUtil.checkCredentials(login, password);
         Messages.showInfoMessage(
             result ? PastebinBundle.message("connection.success") : PastebinBundle.message("cannot.login"),
             result ? PastebinBundle.message("success") : PastebinBundle.message("failure"));
