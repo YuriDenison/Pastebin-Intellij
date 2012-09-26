@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>Pastebin-IDEA</id>
     <name>Pastebin</name>
-    <version>0.2</version>
+    <version>0.9</version>
     <vendor email="yuri.denison@jetbrains.com" url="https://bitbucket.org/volkman/pastebin-intellij-idea-plugin"/>
     <idea-version since-build="107.105"/>
 
