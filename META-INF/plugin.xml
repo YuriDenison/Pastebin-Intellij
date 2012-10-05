@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>Pastebin-IDEA</id>
     <name>Pastebin</name>
-    <version>0.9</version>
+    <version>0.9.1</version>
     <vendor email="yuri.denison@jetbrains.com" url="https://bitbucket.org/volkman/pastebin-intellij-idea-plugin"/>
     <idea-version since-build="107.105"/>
 
@@ -9,6 +9,7 @@
       Pastebin.com plugin for Intellij IDEA
       ]]></description>
 
+    <depends>com.intellij.modules.xml</depends>
     <actions>
         <action id="PastebinPlugin.CreatePasteAction" class="com.pastebin.jetbrains.CreatePasteAction"
                 text="Send to pastebin.com" description="Generate new paste using selected text">
