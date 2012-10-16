@@ -37,7 +37,7 @@ import java.net.URL;
 public class PasteTablePanel extends JPanel {
   private static final int HITS_WIDTH = 70;
   private static final int DATE_WIDTH = 80;
-  private static final int NAME_WIRTH = 200;
+  private static final int NAME_WIDTH = 200;
   private JPanel tablePanel;
   private JPanel codePanel;
   private JPanel toolbarPanel;
@@ -55,7 +55,7 @@ public class PasteTablePanel extends JPanel {
     toolbarPanel = new JPanel(new BorderLayout());
     add(toolbarPanel, BorderLayout.NORTH);
     tablePanel = new JPanel(new BorderLayout());
-    tablePanel.setPreferredSize(new Dimension(HITS_WIDTH + DATE_WIDTH + NAME_WIRTH, -1));
+    tablePanel.setPreferredSize(new Dimension(HITS_WIDTH + DATE_WIDTH + NAME_WIDTH, -1));
     codePanel = new JPanel(new BorderLayout());
     add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, codePanel), BorderLayout.CENTER);
 
@@ -114,7 +114,7 @@ public class PasteTablePanel extends JPanel {
     pasteModel = new PasteTableModel();
     pasteTable = new PasteTable(pasteModel);
     pasteTable.getTableHeader().setReorderingAllowed(false);
-    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_NAME, NAME_WIRTH);
+    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_NAME, NAME_WIDTH);
     pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_HITS, HITS_WIDTH);
     pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_DATE, DATE_WIDTH);
 //    pasteTable.setColumnWidth(PasteColumnInfo.COLUMN_NAME, 200);
@@ -228,7 +228,7 @@ public class PasteTablePanel extends JPanel {
     public RefreshAction() {
       super(PastebinBundle.message("reload.list", pasteModel.getCategory()),
           PastebinBundle.message("reload.list", pasteModel.getCategory()).toLowerCase(),
-          AllIcons.Vcs.Refresh);
+          AllIcons.Actions.Refresh);
     }
 
     @Override
