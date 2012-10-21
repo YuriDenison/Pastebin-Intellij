@@ -1,11 +1,11 @@
 package com.pastebin.jetbrains.ui.settings;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.FilterComponent;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.ScrollPaneFactory;
@@ -228,7 +228,7 @@ public class PasteTablePanel extends JPanel {
     public RefreshAction() {
       super(PastebinBundle.message("reload.list", pasteModel.getCategory()),
           PastebinBundle.message("reload.list", pasteModel.getCategory()).toLowerCase(),
-          AllIcons.Actions.Refresh);
+          IconLoader.getIcon("/actions/sync.png"));
     }
 
     @Override
@@ -276,7 +276,7 @@ public class PasteTablePanel extends JPanel {
 
   private class DeletePasteAction extends DumbAwareAction {
     private DeletePasteAction() {
-      super(PastebinBundle.message("delete.paste"), PastebinBundle.message("delete.paste").toLowerCase(), AllIcons.Actions.Delete);
+      super(PastebinBundle.message("delete.paste"), PastebinBundle.message("delete.paste").toLowerCase(), IconLoader.getIcon("/actions/delete.png"));
     }
 
     @Override
@@ -328,7 +328,7 @@ public class PasteTablePanel extends JPanel {
 
   private class LaunchBrowserAction extends DumbAwareAction {
     private LaunchBrowserAction() {
-      super(PastebinBundle.message("browser.action"), PastebinBundle.message("browser.action").toLowerCase(), AllIcons.Ide.Link);
+      super(PastebinBundle.message("browser.action"), PastebinBundle.message("browser.action").toLowerCase(), IconLoader.getIcon("/xml/browsers/chrome16.png"));
     }
 
     @Override
