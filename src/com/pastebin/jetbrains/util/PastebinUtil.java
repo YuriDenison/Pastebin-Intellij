@@ -1,5 +1,6 @@
 package com.pastebin.jetbrains.util;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -37,8 +38,12 @@ import java.util.List;
 public class PastebinUtil {
   private static final Logger LOG = Logger.getInstance(PastebinUtil.class);
 
-  public static final String PASTEBIN = "Pastebin";
   public static final Icon ICON = IconLoader.getIcon("/com/pastebin/jetbrains/res/pastebin.png", PastebinUtil.class);
+  public static final Icon DELETE_ICON = AllIcons.Actions.Delete;
+  public static final Icon REFRESH_ICON = AllIcons.Actions.Refresh;
+  public static final Icon BROWSER_ICON = AllIcons.Xml.Browsers.Chrome16;
+
+  public static final String PASTEBIN = "Pastebin";
   private static final String DOM_START = "<list>";
   private static final String DOM_END = "</list>";
 
